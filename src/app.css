@@ -1,0 +1,41 @@
+:root {
+    font-family: sans-serif;
+}
+
+html, body, #app {
+    margin: 0;
+    height: 100%;
+}
+
+h2 {
+    opacity: 0.5;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.8rem;
+    margin: 0.5rem 0;
+}
+
+i {
+    opacity: 0.5;
+}
+
+@keyframes popIn {
+    from {
+        transform: translateX(var(--translate-x)) scale(0);
+    }
+    
+    to {
+        transform: translateX(var(--translate-x)) scale(1);
+    }
+}
+
+@keyframes popOut {
+    from {
+        transform: translateX(var(--translate-x)) scale(1);
+    }
+    
+    to {
+        transform: translateX(var(--translate-x)) scale(0);
+    }
+}
