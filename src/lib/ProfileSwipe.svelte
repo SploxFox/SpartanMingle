@@ -97,11 +97,11 @@
 </script>
 
 <div class="container" on:mousedown={onMouseDown} style={transformStyle}>
-    {#each profile.photos as photo}
-        <link rel="prefetch" href={getPhotoUrl(profile.userId, photo)} />
+    {#each profile.photos as photo, i}
+        <link rel="prefetch" href={getPhotoUrl(profile.userId, profile.photoOrder[i])} />
     {/each}
     <div class="photoContainer">
-        <PhotoComp  photo={profile.photos[currentPhotoIndex]} uid={profile.userId} alt={'photo of ' + profile.nickname}/>
+        <PhotoComp uid={profile.userId} slot={profile.photoOrder[i]} alt={'photo of ' + profile.nickname}/>
         <div class="leftClickPane" on:mouseup={() => tryChangeIndex(-1)}/>
         <div class="rightClickPane" on:mouseup={() => tryChangeIndex(1)}/>
     </div>

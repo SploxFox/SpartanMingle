@@ -1,11 +1,11 @@
 <script lang='ts'>
     import { createSelectedGender } from "../constructors";
     import GenderSelector from "./GenderSelector.svelte";
-    import PhotoUpload from "./PhotoUpload.svelte";
+    import PhotoUpload from "./MultiPhotoUpload.svelte";
     import Button from "./Button.svelte";
     import AlignRight from "./AlignRight.svelte";
     import { defaultName, deleteUser, getClientData, signOut, updateUser } from "../fb";
-    import type { Photo, UserData } from "../types";
+    import type { PhotoUploadPhoto, UserData } from "../types";
     import Loading from "./Loading.svelte";
     import LoadingCover from "./LoadingCover.svelte";
     import { getProfile } from "../gpai";
@@ -21,12 +21,19 @@
             selectedSexuality = data.sexuality;
             birthday = new Date(data.birthday).toISOString().split('T')[0];
             aboutMe = data.aboutMe;
-            oldPhotos = data.photos;
             terms = data.terms === 1;
             nickname = data.nickname || defaultName;
+            photoOrder = data.photoOrder || [];
+            photos = [];
+            photoOrder.forEach(slot => {
+                photos[slot - 1] = {
+                    type: 'old'
+                }
+            })
         }
     })
 
+    let photoOrder: number[] = [];
     let selectedGender = createSelectedGender();
     let selectedSexuality = createSelectedGender();
     let birthday: string;
@@ -34,10 +41,11 @@
     let tagline: string = '';
     let nickname: string = defaultName;
 
-    let oldPhotos: Photo[] = [];
-    let newPhotos: Photo[] = [];
     let terms = false;
-    $: numPhotos = oldPhotos.length + newPhotos.length;
+
+    let photos: PhotoUploadPhoto[] = [];
+
+    $: numPhotos = photos.filter(val => val.type !== "nothing").length;
 
     let uploadPromise;
 
@@ -49,7 +57,6 @@
         () => [!!birthday, 'Missing birthday: please enter your birthday.'],
         () => [(Date.now() - new Date(birthday).getTime()) > 18 * 52 * 7 * 24 * 60 * 60 * 1000,
                 'Sorry, but you must be at least 18 years of age or older to use this website.'],
-        () => [numPhotos <= 6, 'Too many photos: please only upload at most 6 photos.'],
         () => [numPhotos >= 2, 'Not enough photos: please upload at least 2 photos.'],
         () => [aboutMe.length < 140, 'Description too long: max 140 characters.'],
         () => [terms, 'Terms and Conditions: You must agree to the terms and conditions in order to use this website.']
@@ -75,12 +82,13 @@
         } else {
             uploadPromise = updateUser({
                 nickname,
+                tagline,
                 gender: selectedGender.male ? "male" : (selectedGender.female ? "female" : "other"),
                 sexuality: selectedSexuality,
                 birthday: new Date(birthday).getTime(),
                 aboutMe,
                 terms: terms && 1,
-                photos: [...oldPhotos, ...newPhotos]
+                photoOrder
             });
             uploadPromise.then(() => window.location.hash = '');
         }
@@ -126,13 +134,13 @@
 
         <section>
             <h2>Photos</h2>
-            <PhotoUpload bind:newPhotos bind:oldPhotos/>
+            <PhotoUpload bind:photos bind:photoOrder/>
         </section>
 
         <section>
             <label>
                 <input type="checkbox" bind:checked={terms}/>
-                I have read and I accept the <a href="/#terms">terms and conditions and privay policy</a>.
+                I have read and I accept the <a href="/#terms">terms and conditions and privacy policy</a>.
             </label>
         </section>
 

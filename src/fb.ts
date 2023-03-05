@@ -3,6 +3,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut as fbSignOut, deleteUser as authDeleteUser } from "firebase/auth";
 import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/functions";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { getStorage, ref as storageRef } from "firebase/storage";
 import { user } from "./user";
 import type { UserData } from "./types";
 import { get } from "svelte/store";
@@ -40,6 +41,9 @@ const functions = getFunctions(fbApp);
 connectFunctionsEmulator(functions, 'localhost', 5000);
 
 const fs = getFirestore();
+
+export const storage = getStorage();
+export const userImageRef = (uid: string, index: number) => storageRef(storage, `userImages/${uid}/${index}`)
 
 onAuthStateChanged(auth, fbUser => {
     user.set({
