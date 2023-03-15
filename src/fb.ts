@@ -5,7 +5,7 @@ import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { getStorage, ref as storageRef } from "firebase/storage";
 import { user } from "./user";
-import type { UserData } from "./types";
+import type { QueryProfileStackReq, UserData } from "./types";
 import { get } from "svelte/store";
 import { getProfile } from "./gpai";
 
@@ -43,7 +43,7 @@ connectFunctionsEmulator(functions, 'localhost', 5000);
 const fs = getFirestore();
 
 export const storage = getStorage();
-export const userImageRef = (uid: string, index: number) => storageRef(storage, `userImages/${uid}/${index}`)
+export const userImageRef = (uid: string, id: string) => storageRef(storage, `userImages/${uid}/${id}`)
 
 onAuthStateChanged(auth, fbUser => {
     user.set({
@@ -76,6 +76,14 @@ export const signOut = () => {
 export const updateUser = httpsCallable<Partial<UserData>, void>(functions, 'updateUser');
 
 const deleteUserFn = httpsCallable(functions, 'deleteUser');
+
+const queryProfileStackFn = httpsCallable<QueryProfileStackReq, UserData[]>(functions, 'queryProfileStack');
+
+export const queryProfileStack = async (req: QueryProfileStackReq) => (await queryProfileStackFn(req)).data;
+
+(window as any).queryProfileStack = queryProfileStack;
+
+(window as any).createDummyUsers = httpsCallable(functions, 'createDummyUsers');
 
 export const deleteUser = async () => {
     try {

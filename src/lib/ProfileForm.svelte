@@ -23,13 +23,12 @@
             aboutMe = data.aboutMe;
             terms = data.terms === 1;
             nickname = data.nickname || defaultName;
-            photoOrder = data.photoOrder || [];
-            photos = [];
-            photoOrder.forEach(slot => {
-                photos[slot - 1] = {
+            photos = data.photos.reduce((prev, curr) => ({
+                ...prev,
+                [curr]: {
                     type: 'old'
                 }
-            })
+            }), {});
         }
     })
 
@@ -43,9 +42,9 @@
 
     let terms = false;
 
-    let photos: PhotoUploadPhoto[] = [];
+    let photos: { [index: string]: PhotoUploadPhoto } = {};
 
-    $: numPhotos = photos.filter(val => val.type !== "nothing").length;
+    $: numPhotos = Object.keys(photos).length;
 
     let uploadPromise;
 
@@ -88,7 +87,7 @@
                 birthday: new Date(birthday).getTime(),
                 aboutMe,
                 terms: terms && 1,
-                photoOrder
+                photos: Object.keys(photos)
             });
             uploadPromise.then(() => window.location.hash = '');
         }
@@ -134,7 +133,7 @@
 
         <section>
             <h2>Photos</h2>
-            <PhotoUpload bind:photos bind:photoOrder/>
+            <PhotoUpload bind:photos/>
         </section>
 
         <section>

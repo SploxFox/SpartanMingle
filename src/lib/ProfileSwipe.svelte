@@ -2,16 +2,20 @@
     import { onMount, onDestroy, createEventDispatcher } from "svelte";
     import { getPhotoUrl } from "../photoUtils";
     import { theme } from "../theme";
-    import type { UserData } from "../types";
+    import type { LikeDislikeVerdict, UserData } from "../types";
     import PhotoComp from "./PhotoComp.svelte";
     import Heart from "svelte-material-icons/Heart.svelte";
     import Close from "svelte-material-icons/CloseThick.svelte";
 
-    export let index: number;
+    export let zIndex: number | null = null;
     export let profile: UserData;
+    export let debug = '';
+    export let element: HTMLElement;
+
 
     const dispatcher = createEventDispatcher();
 
+    let hasSwiped = false;
     let currentPhotoIndex: number = 0;
     let isMouseDown = false;              
     let mouseStartPos: [number, number] = [0, 0];                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
@@ -24,7 +28,7 @@
     $: leftSwipeFrac = -Math.min(swipeFrac, 0);
     $: rightSwipeFrac = Math.max(swipeFrac, 0);
     $: transformStyle = `
-                transition: ${verdict == 'undecided' ? 'none' : '0.25s'};
+                transition: ${verdict == 'undecided' ? 'none' : 'ease-out 1s'};
                 /*transform-origin: left;*/
                 transform: perspective(1000px)
                         /*rotate3d(0, 1, ${y / window.innerHeight}, ${-x / window.innerWidth * 45}deg)*/
@@ -74,14 +78,17 @@
             const h = Math.sqrt(x ** 2 + y ** 2);
             x = x / h * window.innerWidth;
             y = y / h * window.innerHeight;
-            onSwipe(verdict);
+            if (!hasSwiped) {
+                hasSwiped = true;
+                onSwipe(verdict);
+            }
         } else {
             verdict = 'undecided';
             x = y = 0;
         }
     }
 
-    const onSwipe = (verdict: 'like' | 'dislike') => {
+    const onSwipe = (verdict: LikeDislikeVerdict) => {
         dispatcher('swipe', { verdict });
     }
 
@@ -96,12 +103,14 @@
     });
 </script>
 
-<div class="container" on:mousedown={onMouseDown} style={transformStyle}>
-    {#each profile.photos as photo, i}
-        <link rel="prefetch" href={getPhotoUrl(profile.userId, profile.photoOrder[i])} />
-    {/each}
+<div data-debug={debug} bind:this={element} class="container" on:mousedown={onMouseDown} style={`${zIndex !== null ? `z-index: ${hasSwiped ? 4 : zIndex}` : ''}; ${transformStyle}`}>
     <div class="photoContainer">
-        <PhotoComp uid={profile.userId} slot={profile.photoOrder[i]} alt={'photo of ' + profile.nickname}/>
+        {#each profile.photos as photoId, i}
+            <link rel="prefetch" href={getPhotoUrl(profile.userId, photoId)} />
+            <PhotoComp style={`
+                z-index: ${i === currentPhotoIndex ? 0 : -1}
+                `} uid={profile.userId} id={photoId} alt={'photo of ' + profile.nickname}/>
+        {/each}
         <div class="leftClickPane" on:mouseup={() => tryChangeIndex(-1)}/>
         <div class="rightClickPane" on:mouseup={() => tryChangeIndex(1)}/>
     </div>
@@ -112,20 +121,23 @@
     </div>
     <div>
         <div class="byline">
-            <h1>{ profile.nickname }</h1>
+            <h1>{ debug || profile.nickname }</h1>
             <h2>{ Math.floor((Date.now() - profile.birthday) / (52 * 7 * 24 * 60 * 60 * 1000)) }</h2>
         </div>
         <p class="description">{ profile.aboutMe }</p>
     </div>
     <div class="overlay" style={`
         background: ${theme.dislikeColor};
+        ${leftSwipeFrac > 1 ? 'transition: 0.5s' : ''};
         opacity: ${leftSwipeFrac};
     `}>
         <Close color="white" size={96} />
     </div>
     <div class="overlay" style={`
         background: ${theme.accent};
+        ${rightSwipeFrac > 1 ? 'transition: 0.5s' : ''};
         opacity: ${rightSwipeFrac};
+
     `}>
         <Heart color="white" size={96} />
     </div>
@@ -141,6 +153,7 @@
         flex-direction: column;
         user-select: none;
         transition: 0.2s transform;
+        width: 300px;
         padding: 10px;
         border-radius: 10px;
         overflow: hidden;
@@ -148,13 +161,8 @@
         left: 0;
         right: 0;
         top: 0;
+        background-color: white;
         /*width: 300px;*/
-    }
-
-    .container :global(img) {
-        width: 100%;
-        /*height: 60vh;*/
-        border-radius: 10px;
     }
 
     .overlay {
@@ -164,7 +172,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        mix-blend-mode: multiply;
+        /*mix-blend-mode: multiply;*/
     }
 
     .byline {
@@ -194,6 +202,19 @@
 
     .photoContainer {
         position: relative;
+        width: 300px;
+        height: 400px;
+        margin-bottom: 5px;
+        border-radius: 15px;
+        background-color: rgb(209, 209, 209);
+        overflow: hidden;
+    }
+
+    .photoContainer :global(img) {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        inset: 0;
     }
 
     .photoTabs {

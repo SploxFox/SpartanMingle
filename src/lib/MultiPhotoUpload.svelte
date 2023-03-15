@@ -12,29 +12,25 @@
 
     $: fbUser = get(user).fbUser as User;
 
-    export let photoOrder: number[];
-    export let photos: PhotoUploadPhoto[];
+    export let photos: { [id: string]: PhotoUploadPhoto } = {};
+    $: photoLength = Object.keys(photos).length;
 
-    const handleDelete = (i: number) => {
-        photos[i] = {
-            type: 'nothing'
-        }
-        photoOrder = photoOrder.filter(v => v === i + 1);
+    const handleDelete = (id: string) => {
+        delete photos[id];
     }
 
     const handleFilesChanged = (e: Event & { currentTarget: HTMLInputElement }) => {
         for (const file of e.currentTarget.files) {
-            if (photos.length < 6) {
-                startUpload(photos.length + 1, file);
+            if (photoLength < 6) {
+                startUpload(crypto.randomUUID(), file);
             }
         }
     }
 
-    const startUpload = (slot: number, f: File) => {
-        const task = uploadBytesResumable(userImageRef(fbUser.uid, slot), f);
-        const i = slot - 1;
+    const startUpload = (id: string, f: File) => {
+        const task = uploadBytesResumable(userImageRef(fbUser.uid, id), f);
 
-        photos[i] = {
+        photos[id] = {
             type: 'upload',
             progress: 0,
             done: false,
@@ -43,18 +39,18 @@
         }
 
         task.on("state_changed", 
-                s => (photos[i] as NewPhotoUpload).progress = s.bytesTransferred / s.totalBytes,
-                () => (photos[i] as NewPhotoUpload).error = true,
-                () => (photos[i] as NewPhotoUpload).done = true);
+                s => (photos[id] as NewPhotoUpload).progress = s.bytesTransferred / s.totalBytes,
+                () => (photos[id] as NewPhotoUpload).error = true,
+                () => (photos[id] as NewPhotoUpload).done = true);
     }
 </script>
 
 <div class="container">
-    {#each photos as photo, i}
+    {#each Object.entries(photos) as [id, photo]}
         {#if (photo.type === "upload" && photo.done) || photo.type === "old"}
             <div class="imageContainer">
-                <PhotoComp uid={fbUser.uid} slot={i + 1} alt={"photo of you"} />
-                <button class="close" on:click={() => handleDelete(i)}>
+                <PhotoComp uid={fbUser.uid} {id} alt={"photo of you"} />
+                <button class="close" on:click={() => handleDelete(id)}>
                     <CloseThick color="white"/>
                 </button>
             </div>
@@ -66,7 +62,7 @@
             </div>
         {/if}
     {/each}
-    {#if photos.length < 6}
+    {#if photoLength < 6}
         <label class="uploadBox">
             <Plus color={theme.accentColor} size={64} />
             <input type="file" accept="image/*" multiple on:change={handleFilesChanged}/>
