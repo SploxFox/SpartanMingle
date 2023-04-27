@@ -10,14 +10,14 @@
     export let zIndex: number | null = null;
     export let profile: UserData;
     export let debug = '';
-    export let element: HTMLElement;
-
 
     const dispatcher = createEventDispatcher();
 
+    const transitionTime = (window.innerWidth - 500) / 1000;
+
     let hasSwiped = false;
     let currentPhotoIndex: number = 0;
-    let isMouseDown = false;              
+    let isPointerDown = false;              
     let mouseStartPos: [number, number] = [0, 0];                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
     let swipePos: [number, number] = [0, 0];
     let transformStyle = '';
@@ -45,28 +45,28 @@
         }
     }
 
-    const onMouseDown = (e: MouseEvent) => {
-        isMouseDown = true;
+    const onPointerDown = (e: PointerEvent) => {
+        (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+        isPointerDown = true;
         mouseStartPos[0] = e.clientX;
         mouseStartPos[1] = e.clientY;
         swipePos[0] = 0;
         swipePos[1] = 0;
     }
 
-    const onMouseMove = (e: MouseEvent) => {
-        if (isMouseDown) {
+    const onPointerMove = (e: PointerEvent) => {
+        if (isPointerDown) {
             swipePos[0] = e.clientX - mouseStartPos[0];
             swipePos[1] = e.clientY - mouseStartPos[1];
             [x, y] = swipePos;
-            
         }
     }
 
-    const onMouseUp = (e: MouseEvent) => {
+    const onPointerUp = (e: PointerEvent) => {
         if (swipePos[0] !== 0 || swipePos[1] !== 0) {
             e.preventDefault();
         }
-        isMouseDown = false;
+        isPointerDown = false;
 
 
         if (Math.abs(swipeFrac) > 0.3) {
@@ -76,7 +76,7 @@
                 verdict = 'dislike';
             }
             const h = Math.sqrt(x ** 2 + y ** 2);
-            x = x / h * window.innerWidth;
+            x = x / h * (window.innerWidth + 500);
             y = y / h * window.innerHeight;
             if (!hasSwiped) {
                 hasSwiped = true;
@@ -93,17 +93,19 @@
     }
 
     onMount(() => {
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointerup', onPointerUp);
+        window.addEventListener('pointercancel', onPointerUp);
     });
 
     onDestroy(() => {
-        window.removeEventListener('mousemove', onMouseMove);
-        window.removeEventListener('mouseup', onMouseUp);
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', onPointerUp);
+        window.removeEventListener('pointercancel', onPointerUp)
     });
 </script>
 
-<div data-debug={debug} bind:this={element} class="container" on:mousedown={onMouseDown} style={`${zIndex !== null ? `z-index: ${hasSwiped ? 4 : zIndex}` : ''}; ${transformStyle}`}>
+<div data-debug={debug} class="container" on:pointerdown={onPointerDown} style={`${zIndex !== null ? `z-index: ${hasSwiped ? 4 : zIndex}` : ''}; ${transformStyle}`}>
     <div class="photoContainer">
         {#each profile.photos as photoId, i}
             <link rel="prefetch" href={getPhotoUrl(profile.userId, photoId)} />
@@ -128,14 +130,14 @@
     </div>
     <div class="overlay" style={`
         background: ${theme.dislikeColor};
-        ${leftSwipeFrac > 1 ? 'transition: 0.5s' : ''};
+        ${leftSwipeFrac > 1 ? `transition: ${transitionTime}s` : ''};
         opacity: ${leftSwipeFrac};
     `}>
         <Close color="white" size={96} />
     </div>
     <div class="overlay" style={`
         background: ${theme.accent};
-        ${rightSwipeFrac > 1 ? 'transition: 0.5s' : ''};
+        ${rightSwipeFrac > 1 ? `transition: ${transitionTime}s` : ''};
         opacity: ${rightSwipeFrac};
 
     `}>
@@ -149,6 +151,7 @@
     }
 
     .container {
+        touch-action: none;
         display: flex;
         flex-direction: column;
         user-select: none;

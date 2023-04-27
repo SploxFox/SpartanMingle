@@ -20,6 +20,14 @@ i {
     opacity: 0.5;
 }
 
+textarea, input[type=text], input[type=date] {
+    all: unset;
+    padding: 15px;
+    background-color: rgb(236, 236, 236);
+    border-radius: 10px;
+    line-height: 1;
+}
+
 @keyframes popIn {
     from {
         transform: translateX(var(--translate-x)) scale(0);
@@ -37,5 +45,17 @@ i {
     
     to {
         transform: translateX(var(--translate-x)) scale(0);
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translate(5vw, 0);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translate(0, 0);
+        opacity: 1;
     }
 }

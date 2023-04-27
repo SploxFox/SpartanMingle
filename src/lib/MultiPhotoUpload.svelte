@@ -17,6 +17,7 @@
 
     const handleDelete = (id: string) => {
         delete photos[id];
+        photos = photos;
     }
 
     const handleFilesChanged = (e: Event & { currentTarget: HTMLInputElement }) => {

@@ -11,12 +11,20 @@
     import femaleIcon from '../icons/gender/female.svg';
     import maleIcon from '../icons/gender/male.svg';
     import otherIcon from '../icons/gender/other.svg';
+    import femaleSquareIcon from '../icons/gender/femaleSquare.svg';
+    import maleSquareIcon from '../icons/gender/maleSquare.svg';
+    import otherSquareIcon from '../icons/gender/otherSquare.svg';
+    
     import { theme } from '../theme';
-    import GenderHeartIcon from './GenderHeartIcon.svelte';
+    import GenderHeartIcon from './GenderCheckIcon.svelte';
 
     const FemaleIcon = femaleIcon as any;
     const MaleIcon = maleIcon as any;
     const OtherIcon = otherIcon as any;
+    
+    const FemaleSquareIcon = femaleSquareIcon as any;
+    const MaleSquareIcon = maleSquareIcon as any;
+    const OtherSquareIcon = otherSquareIcon as any;
 
     $: color = selected.male ? theme.male :
             ( selected.female ? theme.female : theme.other );
@@ -61,8 +69,8 @@
                 class="selector"
                 style={`
                     border-radius: ${selectionExists ? '10px' : '50%'};
-                    transform: translateX(${(renderIndex ?? -1) * 100}%) scale(${selectionExists ? 1 : 0});
-                    --translate-x: ${(renderIndex ?? -1) * 100}%;
+                    transform: translateX(${(renderIndex ?? -1) * 64}px) scale(${selectionExists ? 1 : 0});
+                    --translate-x: ${(renderIndex ?? -1) * 64}px;
                     animation: ${selectionExists ? '0.3s popIn' : '0.3s popOut'};
                     background-color: ${color};`}/>
         {/if}
@@ -72,25 +80,37 @@
     </div>
     <div class="container">
         <button class="icon" on:click={() => setGender('male')}>
-            <MaleIcon/>
+            {#if multiple}
+                <MaleSquareIcon/>
+            {:else}
+                <MaleIcon/>
+            {/if}
             <GenderHeartIcon visible={multiple} isActive={selected.male}/>
         </button>
         <button class="icon" on:click={() => setGender('female')}>
-            <FemaleIcon/>
+            {#if multiple}
+                <FemaleSquareIcon/>
+            {:else}
+                <FemaleIcon/>
+            {/if}
             <GenderHeartIcon visible={multiple} isActive={selected.female}/>
         </button>
         <button class="icon" on:click={() => setGender('other')}>
-            <OtherIcon/>
+            {#if multiple}
+                <OtherSquareIcon/>
+            {:else}
+                <OtherIcon/>
+            {/if}
             <GenderHeartIcon visible={multiple} isActive={selected.other}/>
         </button>
         {#if !multiple}
             <div 
                 bind:this={topSelector}
-                class="selector"
+                class="selector foreground"
                 style={`
-                    border-radius: ${selectionExists ? '10px' : '50%'};
-                    transform: translateX(${(renderIndex ?? -1) * 100}%) scale(${selectionExists ? 1 : 0});
-                    --translate-x: ${(renderIndex ?? -1) * 100}%;
+                    border-radius: ${/*selectionExists ? '10px' : '50%'*/'50%'};
+                    transform: translateX(${(renderIndex ?? -1) * 64}px) scale(${selectionExists ? 1 : 0});
+                    --translate-x: ${(renderIndex ?? -1) * 64}px;
                     animation: ${selectionExists ? '0.3s popIn' : '0.3s popOut'};`}/>
         {/if}
     </div>
@@ -115,13 +135,14 @@
         position: absolute;
         inset: 0;
     }
-    .background div {
-        width: 64px;
-        height: 64px;;
-    }
-    .selector {
+    .background div:not(.selector) {
         width: 64px;
         height: 64px;
+    }
+    .selector {
+        width: 16px;
+        height: 16px;
+        margin: 24px;
         position: absolute;
         background-color: white;
         transition: 0.2s transform, 0.2s background-color, 0.4s border-radius;
@@ -139,12 +160,11 @@
         cursor: pointer;
     }
     .icon:hover {
-        transform: scale(0.8);
+        transform: scale(1.1);
     }
     .icon :global(svg:nth-child(2)) {
         position: absolute;
-        inset: 20px;
-        top: 21px;
+        inset: 18px;
     }
     .fillIconBg {
         position: absolute;

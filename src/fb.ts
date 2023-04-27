@@ -5,7 +5,7 @@ import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { getStorage, ref as storageRef } from "firebase/storage";
 import { user } from "./user";
-import type { QueryProfileStackReq, UserData } from "./types";
+import type { LikedDisliked, MatchVerdict, QueryProfileStackReq, UserData } from "./types";
 import { get } from "svelte/store";
 import { getProfile } from "./gpai";
 
@@ -38,7 +38,7 @@ export const auth = getAuth();
 export let defaultName = '';
 
 const functions = getFunctions(fbApp);
-connectFunctionsEmulator(functions, 'localhost', 5000);
+//connectFunctionsEmulator(functions, 'localhost', 5000);
 
 const fs = getFirestore();
 
@@ -80,6 +80,8 @@ const deleteUserFn = httpsCallable(functions, 'deleteUser');
 const queryProfileStackFn = httpsCallable<QueryProfileStackReq, UserData[]>(functions, 'queryProfileStack');
 
 export const queryProfileStack = async (req: QueryProfileStackReq) => (await queryProfileStackFn(req)).data;
+
+export const likeDislike = httpsCallable<LikedDisliked, MatchVerdict>(functions, 'likeDislike');
 
 (window as any).queryProfileStack = queryProfileStack;
 

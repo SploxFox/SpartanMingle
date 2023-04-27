@@ -9,6 +9,8 @@
     import Loading from "./Loading.svelte";
     import LoadingCover from "./LoadingCover.svelte";
     import { getProfile } from "../gpai";
+    import FlippableProfilePhoto from "./FlippableProfilePhoto.svelte";
+    import MatchGet from "./MatchGet.svelte";
 
     const userData = getClientData();
     userData.then((data: UserData | false) => {
@@ -73,6 +75,18 @@
         }
     }
 
+    const handleChangeAboutMe = (e: Event & {
+            currentTarget: EventTarget & HTMLTextAreaElement;
+            }) => {
+        const el = e.currentTarget;
+        console.log(el.scrollHeight)
+        if (el.scrollHeight > 118) {
+            el.value = aboutMe;
+        } else {
+            aboutMe = el.value;
+        }
+    }
+
     const handleSubmit = () => {
         validateData();
 
@@ -125,7 +139,7 @@
         <section>
             <h2>About me</h2>
             <i>optional</i>
-            <textarea rows={5} cols={30} bind:value={aboutMe}/>
+            <textarea rows={5} cols={30} value={aboutMe} on:input={(e) => handleChangeAboutMe(e)}/>
             {#if (aboutMe ?? '').length > 0}
                 <span style={`color: ${(aboutMe ?? '').length > 140 ? 'red' : 'unset'}`}>{(aboutMe ?? '').length}/140</span>
             {/if}
@@ -166,15 +180,17 @@
     <Button minor on:click={deleteUser}>Delete account</Button>
 </div>
 
+
 <style>
     textarea {
         font-family: sans-serif;
-        font-size: 1rem;
-        resize: none;
-        padding: 10px;
+        font-size: 16px;
+        height: 88px;
+        padding: 15px;
         margin: 0 -10px;
         width: 300px;
-        scrollbar-gutter: stable;
+        overflow: hidden;
+        line-height: 1.1;
     }
     section {
         display: flex;
