@@ -29,7 +29,7 @@ provider.addScope('https://www.googleapis.com/auth/userinfo.email');
 provider.addScope('https://www.googleapis.com/auth/user.gender.read');
 
 provider.setCustomParameters({
-    //hd: 'case.edu'
+    hd: 'case.edu'
 })
 
 export const auth = getAuth();
@@ -38,7 +38,7 @@ export const auth = getAuth();
 export let defaultName = '';
 
 const functions = getFunctions(fbApp);
-connectFunctionsEmulator(functions, 'localhost', 5000);
+//connectFunctionsEmulator(functions, 'localhost', 5000);
 
 const fs = getFirestore();
 
