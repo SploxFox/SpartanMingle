@@ -79,7 +79,7 @@
             currentTarget: EventTarget & HTMLTextAreaElement;
             }) => {
         const el = e.currentTarget;
-        console.log(el.scrollHeight)
+        //console.log(el.scrollHeight)
         if (el.scrollHeight > 118) {
             el.value = aboutMe;
         } else {

@@ -13,7 +13,7 @@
     let isFirst = true;
     const numLoaded = 5;
 
-    $: console.log(`Currently showing ${profileOrder[0]}`);
+    //$: console.log(`Currently showing ${profileOrder[0]}`);
 
     const genders = getClientData().then(val => 
             Object.entries((val as DocumentData).sexuality)

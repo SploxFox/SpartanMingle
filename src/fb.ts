@@ -1,7 +1,7 @@
-import { initializeApp } from "firebase/app";
+import { FirebaseError, initializeApp } from "firebase/app";
 //import { getAnalytics } from "firebase/analytics";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut as fbSignOut, deleteUser as authDeleteUser, type User } from "firebase/auth";
-import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/functions";
+import { connectFunctionsEmulator, getFunctions, httpsCallable, type HttpsCallable } from "firebase/functions";
 import { DocumentReference, doc, getDoc, getFirestore, onSnapshot } from "firebase/firestore";
 import { getStorage, ref as storageRef } from "firebase/storage";
 import { type ReadyClientData, client } from "./client";
@@ -38,39 +38,53 @@ export const auth = getAuth();
 export let defaultName = '';
 
 const functions = getFunctions(fbApp);
-//connectFunctionsEmulator(functions, 'localhost', 5000);
+connectFunctionsEmulator(functions, 'localhost', 5000);
 
 const fs = getFirestore();
 
 export const storage = getStorage();
 export const userImageRef = (uid: string, id: string) => storageRef(storage, `userImages/${uid}/${id}`)
 
+export const throwError = (e: FirebaseError) => {
+    if (e.code === 'unavailable') {
+        alert('You are offline. Please connect to the internet to use Spartan Mingle');
+        window.location.reload();
+    } else {
+        alert(e);
+    }
+}
+
 let unsubPrivateData = () => {};
 
 onAuthStateChanged(auth, async fbUser => {
-    if (!fbUser) {
+    try {
+        if (!fbUser) {
+            client.set({
+                ready: false,
+                signedOut: true,
+            });
+            return;
+        }
+    
         client.set({
-            ready: false,
-            signedOut: true,
+            ready: true,
+            signedOut: false,
+            privateData: (await getDoc(userPrivateDoc(fbUser.uid))).data() as PrivateUserData,
+            uid: fbUser.uid,
+            fbUser
         });
-        return;
+    
+        unsubPrivateData();
+        unsubPrivateData = onSnapshot(userPrivateDoc(fbUser.uid), snap => {
+            client.update(prev => ({
+                ...prev,
+                privateData: snap.data() as PrivateUserData
+            }));
+        });
+    } catch (e) {
+        throwError(e);
     }
-
-    client.set({
-        ready: true,
-        signedOut: false,
-        privateData: (await getDoc(userPrivateDoc(fbUser.uid))).data() as PrivateUserData,
-        uid: fbUser.uid,
-        fbUser
-    });
-
-    unsubPrivateData();
-    unsubPrivateData = onSnapshot(userPrivateDoc(fbUser.uid), snap => {
-        client.update(prev => ({
-            ...prev,
-            privateData: snap.data() as PrivateUserData
-        }));
-    })
+    
 });
 
 export const signIn = () => {
@@ -95,19 +109,22 @@ export const signOut = () => {
     fbSignOut(auth);
 }
 
-export const updateUser = httpsCallable<Partial<UserData>, void>(functions, 'updateUser');
+const callableWrapper = <TReq, TRes>(callable: HttpsCallable<TReq, TRes>) => async (args: TReq) => {
+    try {
+        return await callable(args);
+    } catch (e) {
+        console.log(e);
+        alert(`There was an error with ${callable.name}: ${e}`)
+    }
+}
 
-const deleteUserFn = httpsCallable(functions, 'deleteUser');
-
-const queryProfileStackFn = httpsCallable<QueryProfileStackReq, UserData[]>(functions, 'queryProfileStack');
-
+export const updateUser = callableWrapper(httpsCallable<Partial<UserData>, void>(functions, 'updateUser'));
+const deleteUserFn = callableWrapper(httpsCallable<void>(functions, 'deleteUser'));
+const queryProfileStackFn = callableWrapper(httpsCallable<QueryProfileStackReq, UserData[]>(functions, 'queryProfileStack'));
 export const queryProfileStack = async (req: QueryProfileStackReq) => (await queryProfileStackFn(req)).data;
-
-export const likeDislike = httpsCallable<LikedDisliked, MatchVerdict>(functions, 'likeDislike');
-
-export const sendMessage = httpsCallable<SendMessage, void>(functions, 'sendMessage');
-
-export const markAllAsRead = httpsCallable<void, void>(functions, 'markAllAsRead');
+export const likeDislike = callableWrapper(httpsCallable<LikedDisliked, MatchVerdict>(functions, 'likeDislike'));
+export const sendMessage = callableWrapper(httpsCallable<SendMessage, void>(functions, 'sendMessage'));
+export const markAllAsRead = callableWrapper(httpsCallable<void, void>(functions, 'markAllAsRead'));
 
 (window as any).queryProfileStack = queryProfileStack;
 

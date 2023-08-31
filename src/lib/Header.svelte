@@ -1,14 +1,16 @@
-<script>
+<script lang='ts'>
 
     import Heart from 'svelte-material-icons/Heart.svelte';
     import AccountButton from "./AccountButton.svelte";
     import MessagesButton from "./MessagesButton.svelte";
+    import heartLogo from '../assets/heartLogo.svg';
 
+    const HeartLogo = heartLogo as any;
 </script>
 
 <header>
     <div class="container" on:click={() => window.location.hash = ''}>
-        <Heart size={32} color={null} />
+        <HeartLogo style='width: 32px' />
         <h1>spartan mingle</h1>
     </div>
     <div class='filler' />

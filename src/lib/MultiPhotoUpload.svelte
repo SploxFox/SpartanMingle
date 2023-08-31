@@ -3,14 +3,15 @@
     import CloseThick from 'svelte-material-icons/CloseThick.svelte';
     import { get } from 'svelte/store';
     import type { NewPhotoUpload, PhotoUploadPhoto } from '../types'
-    import { client } from '../client';
+    import { client, type ReadyClientData } from '../client';
     import PhotoComp from './PhotoComp.svelte';
     import Plus from 'svelte-material-icons/Plus.svelte';
     import { theme } from '../theme';
     import { uploadBytesResumable, type UploadTask } from 'firebase/storage';
     import { storage, userImageRef } from '../fb';
+    import { v4 as uuidv4 } from 'uuid';
 
-    $: fbUser = get(client).fbUser as User;
+    $: fbUser = (get(client) as ReadyClientData).fbUser as User;
 
     export let photos: { [id: string]: PhotoUploadPhoto } = {};
     $: photoLength = Object.keys(photos).length;
@@ -23,7 +24,7 @@
     const handleFilesChanged = (e: Event & { currentTarget: HTMLInputElement }) => {
         for (const file of e.currentTarget.files) {
             if (photoLength < 6) {
-                startUpload(crypto.randomUUID(), file);
+                startUpload(uuidv4(), file);
             }
         }
     }

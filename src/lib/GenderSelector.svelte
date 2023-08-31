@@ -37,7 +37,7 @@
     let bottomSelector: HTMLElement;
 
     $: selectionExists = Object.values(selected).some(val => val);
-    $: console.log(selectionExists);
+    //$: console.log(selectionExists);
 
     $: renderIndex = selectionExists ? index : lastIndex;
 
@@ -165,6 +165,7 @@
     .icon :global(svg:nth-child(2)) {
         position: absolute;
         inset: 18px;
+        width: 28px;
     }
     .fillIconBg {
         position: absolute;
