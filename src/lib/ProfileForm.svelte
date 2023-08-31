@@ -4,7 +4,7 @@
     import PhotoUpload from "./MultiPhotoUpload.svelte";
     import Button from "./Button.svelte";
     import AlignRight from "./AlignRight.svelte";
-    import { defaultName, deleteUser, getClientData, signOut, updateUser } from "../fb";
+    import { defaultName, deleteUser, getClientData, getReadyClient, signOut, updateUser } from "../fb";
     import type { PhotoUploadPhoto, UserData } from "../types";
     import Loading from "./Loading.svelte";
     import LoadingCover from "./LoadingCover.svelte";
@@ -12,8 +12,8 @@
     import FlippableProfilePhoto from "./FlippableProfilePhoto.svelte";
     import MatchGet from "./MatchGet.svelte";
 
-    const userData = getClientData();
-    userData.then((data: UserData | false) => {
+    const userData = getReadyClient().then(client => {
+        const data = client.privateData.data;
         if (data) {
             selectedGender = {
                 male: data.gender === 'male',
@@ -112,7 +112,7 @@
 {#if uploadPromise}
     <LoadingCover />
 {:else}
-    {#await userData}
+    {#await getReadyClient()}
         <Loading />
     {:then data}
         <section>

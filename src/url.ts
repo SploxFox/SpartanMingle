@@ -1,10 +1,10 @@
-import { derived, writable } from 'svelte/store'
+import { derived, writable, type Readable, type Writable } from 'svelte/store'
 
-export function createUrlStore(): any {
+export function createUrlStore(): Readable<URL> {
     // Ideally a bundler constant so that it's tree-shakable
     if (typeof window === 'undefined') {
         const { subscribe } = writable();
-        return { subscribe };
+        return { subscribe } as any;
     }
 
     const href = writable(window.location.href);

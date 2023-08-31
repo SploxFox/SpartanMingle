@@ -1,4 +1,5 @@
 <script lang="ts">
+    import AspectRatioFit from "./AspectRatioFit.svelte";
     import MatchGet from "./MatchGet.svelte";
     import ProfileStack from "./ProfileStack.svelte";
 
@@ -21,12 +22,13 @@
         }
     }
 </script>
-
-<ProfileStack on:match-verdict={({ detail: { matchVerdict, uid, pid } }) => {
-    if (matchVerdict.matched) {
-        handleMatch(uid, pid);
-    }
-}}/>
+<AspectRatioFit ratio='9/16'>
+    <ProfileStack on:match-verdict={({ detail: { matchVerdict, uid, pid } }) => {
+        if (matchVerdict.matched) {
+            handleMatch(uid, pid);
+        }
+    }}/>
+</AspectRatioFit>
 {#if currentMatch}
     {#key currentMatch.uid}
         <MatchGet {...currentMatch} on:done={handleMatchDone} />

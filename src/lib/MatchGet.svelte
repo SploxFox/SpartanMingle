@@ -62,7 +62,7 @@
         handle = requestAnimationFrame(update);
         setTimeout(() => {
             hasMounted = true
-        }, 0);
+        }, 200);
     });
 
     onDestroy(() => {

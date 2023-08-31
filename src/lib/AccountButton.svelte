@@ -10,7 +10,8 @@
     button {
         all: unset;
         cursor: pointer;
-        padding: 20px;
+        padding: 10px 10px;
         color: blue;
+        display: flex;
     }
 </style>

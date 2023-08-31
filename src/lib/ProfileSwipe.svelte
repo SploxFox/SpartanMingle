@@ -6,6 +6,7 @@
     import PhotoComp from "./PhotoComp.svelte";
     import Heart from "svelte-material-icons/Heart.svelte";
     import Close from "svelte-material-icons/CloseThick.svelte";
+    import AspectRatioFit from "./AspectRatioFit.svelte";
 
     export let zIndex: number | null = null;
     export let profile: UserData;
@@ -89,7 +90,7 @@
     }
 
     const onSwipe = (verdict: LikeDislikeVerdict) => {
-        dispatcher('swipe', { verdict });
+        dispatcher('swipe', { uid: profile.userId, verdict });
     }
 
     onMount(() => {
@@ -121,7 +122,7 @@
             <div class={`photoTab ${i === currentPhotoIndex ? 'selected' : ''}`}/>
         {/each}
     </div>
-    <div>
+    <div class='descriptionContainer'>
         <div class="byline">
             <h1>{ debug || profile.nickname }</h1>
             <h2>{ Math.floor((Date.now() - profile.birthday) / (52 * 7 * 24 * 60 * 60 * 1000)) }</h2>
@@ -139,7 +140,6 @@
         background: ${theme.accent};
         ${rightSwipeFrac > 1 ? `transition: ${transitionTime}s` : ''};
         opacity: ${rightSwipeFrac};
-
     `}>
         <Heart color="white" size={96} />
     </div>
@@ -156,15 +156,14 @@
         flex-direction: column;
         user-select: none;
         transition: 0.2s transform;
-        width: 300px;
         padding: 10px;
-        border-radius: 10px;
+        border-radius: 20px;
         overflow: hidden;
         position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
+        inset: 0;
         background-color: white;
+        justify-content: center;
+        align-items: stretch;
         /*width: 300px;*/
     }
 
@@ -205,12 +204,13 @@
 
     .photoContainer {
         position: relative;
-        width: 300px;
-        height: 400px;
+        width: 100%;
+        aspect-ratio: 3 / 4;
         margin-bottom: 5px;
         border-radius: 15px;
         background-color: rgb(209, 209, 209);
         overflow: hidden;
+        flex-shrink: 0;
     }
 
     .photoContainer :global(img) {
@@ -253,5 +253,10 @@
     .description {
         white-space: break-spaces;
         font-size: 15px;
+    }
+
+    .descriptionContainer {
+        flex-grow: 1;
+        min-height: 0;
     }
 </style>

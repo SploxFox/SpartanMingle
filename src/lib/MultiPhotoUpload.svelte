@@ -3,14 +3,14 @@
     import CloseThick from 'svelte-material-icons/CloseThick.svelte';
     import { get } from 'svelte/store';
     import type { NewPhotoUpload, PhotoUploadPhoto } from '../types'
-    import { user } from '../user';
+    import { client } from '../client';
     import PhotoComp from './PhotoComp.svelte';
     import Plus from 'svelte-material-icons/Plus.svelte';
     import { theme } from '../theme';
     import { uploadBytesResumable, type UploadTask } from 'firebase/storage';
     import { storage, userImageRef } from '../fb';
 
-    $: fbUser = get(user).fbUser as User;
+    $: fbUser = get(client).fbUser as User;
 
     export let photos: { [id: string]: PhotoUploadPhoto } = {};
     $: photoLength = Object.keys(photos).length;

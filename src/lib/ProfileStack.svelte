@@ -13,6 +13,8 @@
     let isFirst = true;
     const numLoaded = 5;
 
+    $: console.log(`Currently showing ${profileOrder[0]}`);
+
     const genders = getClientData().then(val => 
             Object.entries((val as DocumentData).sexuality)
             .filter(([gender, bool]) => bool)
@@ -29,14 +31,15 @@
         }
         loading = false;
         profiles = profiles;
+        profileOrder = profileOrder;
     }
 
-    $: handleSwipe = async ({ detail: { verdict }}: CustomEvent<{ verdict: LikeDislikeVerdict }>) => {
-        likeDislike({ otherUser: profileOrder[0], verdict })
+    $: handleSwipe = async ({ detail: { uid, verdict }}: CustomEvent<{ uid: string, verdict: LikeDislikeVerdict }>) => {
+        likeDislike({ otherUser: uid , verdict })
                 .then(matchVerdict =>
                         dispatch('match-verdict', {
                             matchVerdict: matchVerdict.data,
-                            uid: profileOrder[0],
+                            uid,
                             pid: profiles[profileOrder[0]].photos[0]
                         })
                 );
@@ -57,21 +60,23 @@
     getProfiles();
 </script>
 
-<div class="container">
-    {#if loading}
-        <Loading />
-    {:else if profileOrder.length == 0}
-        No profiles left
-    {/if}
+{#if loading}
+    <Loading stack />
+{:else if profileOrder.length == 0 || (!isFirst && profileOrder.length == 1)}
+    <p>No profiles left — you swiped through them all! Maybe ask your crush to join? <span>( ͡° ͜ʖ ͡°)</span></p>
+{/if}
 
-    {#each profileOrder.slice(0, numLoaded).reverse() as uid (uid)}
-        <ProfileSwipe profile={profiles[uid]} on:swipe={handleSwipe} />
-    {/each}
-</div>
+{#each profileOrder.slice(0, numLoaded).reverse() as uid (uid)}
+    <ProfileSwipe profile={profiles[uid]} on:swipe={handleSwipe} />
+{/each}
 
 <style>
     .container {
         width: 320px;
         position: relative;
+    }
+
+    span {
+        white-space: nowrap;
     }
 </style>

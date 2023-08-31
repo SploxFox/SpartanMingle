@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@types/gapi": "^0.0.44",
-    "firebase": "^9.17.1",
+    "firebase": "^10.3.0",
     "svelte-material-icons": "^3.0.4",
     "vite-plugin-svelte-svg": "^2.2.1"
   }

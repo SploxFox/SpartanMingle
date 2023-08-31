@@ -5,9 +5,11 @@
 </script>
 <div class={`container ${noScroll ? 'noScroll' : ''}`}>
     <Header />
-    <main>
-        <slot />
-    </main>
+    <div class='mainContainer'>
+        <main>
+            <slot />
+        </main>
+    </div>
 </div>
 
 <style>
@@ -15,7 +17,13 @@
         height: 100%;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
+    }
+    .mainContainer {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
     }
     .noScroll {
         overflow: hidden;
@@ -25,6 +33,9 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
-        padding: 10px 20px;
+        margin: 10px 20px;
+        margin-top: 0;
+        flex-grow: 1;
+        position: relative;
     }
 </style>
