@@ -3,6 +3,7 @@
     import FakeCard from "./FakeCard.svelte";
 
     export let stack = false;
+    export let message: string | undefined = undefined;
 
     const loadingMessages = [[
         'Loading...',
@@ -89,6 +90,9 @@
 </div>
 {#if loadingMessage}
     <h1 class={`msg ${msgStage}`}>{loadingMessage}</h1>
+{/if}
+{#if message}
+    <h1 class='msg'>{message}</h1>
 {/if}
 
 <style>

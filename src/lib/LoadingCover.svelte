@@ -1,13 +1,16 @@
+<script>
+    import Loading from "./Loading.svelte";
+
+</script>
 <div>
-    Loading...
+    <Loading message="Getting you set up..."/>
 </div>
 
 <style>
     div {
-        position: absolute;
+        position: fixed;
         inset: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        color: white;
+        background-color: rgba(255, 255, 255, 1);
         display: flex;
         align-items: center;
         justify-content: center;

@@ -1,5 +1,5 @@
 import { FirebaseError, initializeApp } from "firebase/app";
-//import { getAnalytics } from "firebase/analytics";
+import { getAnalytics } from "firebase/analytics";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut as fbSignOut, deleteUser as authDeleteUser, type User } from "firebase/auth";
 import { connectFunctionsEmulator, getFunctions, httpsCallable, type HttpsCallable } from "firebase/functions";
 import { DocumentReference, doc, getDoc, getFirestore, onSnapshot } from "firebase/firestore";
@@ -21,7 +21,9 @@ export const firebaseConfig = {
 
 // Initialize Firebase
 const fbApp = initializeApp(firebaseConfig);
-//const analytics = getAnalytics(fbApp);
+try {
+    const analytics = getAnalytics(fbApp);
+} catch (e) {}
 
 const provider = new GoogleAuthProvider();
 provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
@@ -38,7 +40,9 @@ export const auth = getAuth();
 export let defaultName = '';
 
 const functions = getFunctions(fbApp);
-connectFunctionsEmulator(functions, 'localhost', 5000);
+if (window.location.hostname === 'localhost') {
+    connectFunctionsEmulator(functions, 'localhost', 5000);
+}
 
 const fs = getFirestore();
 

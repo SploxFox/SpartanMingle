@@ -3,7 +3,7 @@
     import { signIn } from "../fb";
 
 </script>
-<button on:click={signIn}>Sign in with CWRU Google Account</button>
+<button on:click={signIn}>Sign in with CWRU</button>
 
 <style>
     button {

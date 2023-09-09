@@ -12,8 +12,10 @@
     import FlippableProfilePhoto from "./FlippableProfilePhoto.svelte";
     import MatchGet from "./MatchGet.svelte";
 
+    let isFirst = false;
+
     const userData = getReadyClient().then(client => {
-        const data = client.privateData.data;
+        const data = client.privateData?.data;
         if (data) {
             selectedGender = {
                 male: data.gender === 'male',
@@ -31,10 +33,12 @@
                     type: 'old'
                 }
             }), {});
+            photoOrder = data.photos;
+        } else {
+            isFirst = true;
         }
     })
 
-    let photoOrder: number[] = [];
     let selectedGender = createSelectedGender();
     let selectedSexuality = createSelectedGender();
     let birthday: string;
@@ -44,6 +48,7 @@
 
     let terms = false;
 
+    let photoOrder: string[] = [];
     let photos: { [index: string]: PhotoUploadPhoto } = {};
 
     $: numPhotos = Object.keys(photos).length;
@@ -101,9 +106,9 @@
                 birthday: new Date(birthday).getTime(),
                 aboutMe,
                 terms: terms && 1,
-                photos: Object.keys(photos)
+                photos: photoOrder
             });
-            uploadPromise.then(() => window.location.hash = '');
+            uploadPromise.then(() => window.location.hash = isFirst ? '#tutorial' : '');
         }
     }
 
@@ -147,13 +152,14 @@
 
         <section>
             <h2>Photos</h2>
-            <PhotoUpload bind:photos/>
+            <i>at least 2. drag to reorder</i>
+            <PhotoUpload bind:photos bind:photoOrder/>
         </section>
 
         <section>
             <label>
                 <input type="checkbox" bind:checked={terms}/>
-                I have read and I accept the <a href="/#terms">terms and conditions and privacy policy</a>.
+                I have read and I accept the <a href="/#terms" target='_blank'>terms and conditions and privacy policy</a>.
             </label>
         </section>
 

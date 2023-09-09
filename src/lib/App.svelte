@@ -9,6 +9,7 @@
     import Loading from "./Loading.svelte";
     import MessagePage from "./messaging/MessageSelectPage.svelte";
     import MessageConversationPage from "./messaging/MessageConversationPage.svelte";
+    import Tutorial from "./Tutorial.svelte";
 
 </script>
 
@@ -18,11 +19,17 @@
     </BasicPage>
 {:else if $client.signedOut}
     <BasicPage>
-        <SignIn/>
+        <div style={`width: 100%; height: 100%; display: flex; align-items: center; justify-content: center`}>
+            <SignIn/>
+        </div>
     </BasicPage>
 {:else if $url.hash == '#loading' || !$client.ready}
     <BasicPage>
         <Loading stack/>
+    </BasicPage>
+{:else if $url.hash === '#tutorial'}
+    <BasicPage>
+        <Tutorial />
     </BasicPage>
 {:else if $client.ready && ($url.hash === '#profile' || !$client.privateData)}
     <BasicPage>
