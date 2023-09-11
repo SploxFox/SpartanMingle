@@ -35,6 +35,10 @@ textarea, input[type=text], input[type=date] {
     line-height: 1;
 }
 
+img {
+    object-fit: cover;
+}
+
 @keyframes popIn {
     from {
         transform: translateX(var(--translate-x)) scale(0);
