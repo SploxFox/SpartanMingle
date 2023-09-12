@@ -6,8 +6,8 @@
     <p>
         Welcome to the Spartan Mingle site (the Website)! This is a binding agreement between you
         and the group of owners, operators, administrators and all else responsible for the Website
-        (collectively, "us", "we"). We are not affiliated with Case Western Reserve University (the University);
-        we're just students there.
+        (collectively, "us", "we"). We are not affiliated with Case Western Reserve University
+        (the University).
         
         In order to create an
         account on this website, you need to agree to the following terms and conditions.
@@ -19,6 +19,36 @@
         If such Content is reported to us, it will be our sole discretion as to what action, if any, should be taken,
         in accordance with applicable laws and university policy.
     </p>
+
+    <h2>
+        Disclaimers
+    </h2>
+
+    <p><b>
+        The following shall not apply to the extent prohibited by applicable law.
+        
+        This Website is provided "as is". We hereby disclaim all warranties of any kind, express or implied,
+        including, without limitation, the warranties of merchantability, fitness for a particular purpose
+        and non-infringement. We do not make any warranty that the Website will be error free or that access
+        to the Website will be continuous or uninterrupted. You agree that any interruptions to the service
+        will not qualify for reimbursement or compensation. You understand that you download from, or otherwise
+        obtain content or services through, the Website at your own discretion and risk.
+
+        In no event shall we be liable for any claim, damages or other liability,
+        whether in an action of contract, tort or otherwise, arising from, out of or in connection with the
+        software or the use or other dealings in the software.
+
+        No advice or information, whether oral or written, obtained by you in any fashion shall create any warranty
+        not expressly stated in this Agreement.
+
+        You expressly understand and agree that in no event will we be liable with respect to any subject matter of
+        this agreement under any contract, negligence, strict liability or other legal or equitable theory for: 
+        (i) any special, incidental or consequential damages; (ii) the cost of procurement or substitute
+        products or services; (iii) interruption of use or loss or corruption of data; (iv)
+        any statements or conduct of any third party on the service; or (v) 
+        ny unauthorized access to or alterations of your Content. We shall have no liability for any failure
+        or delay due to matters beyond our reasonable control.
+    </b></p>
 
     <h2>
         Eligible Users
@@ -66,7 +96,7 @@
     <ul>
         <li>the content chiefly depicts you;</li>
         <li>you give us the non-exclusive right to store, reproduce, and redistribute your content in perpetuity,
-            for commercial purposes or otherwise; and</li>
+            for any purpose or reason; and</li>
         <li>you are legally able to give us those rights.</li>
     </ul>
 
@@ -90,36 +120,6 @@
         including, without limitation, ownership provisions, warranty disclaimers, indemnity and limitations
         of liability.
     </p>
-
-    <h2>
-        Disclaimers
-    </h2>
-
-    <p><b>
-        This Website is provided "as is". We hereby disclaim all warranties of any kind, express or implied,
-        including, without limitation, the warranties of merchantability, fitness for a particular purpose
-        and non-infringement. We do not make any warranty that the Website will be error free or that access
-        to the Website will be continuous or uninterrupted. You agree that any interruptions to the service
-        will not qualify for reimbursement or compensation. You understand that you download from, or otherwise
-        obtain content or services through, the Website at your own discretion and risk.
-
-        In no event shall we be liable for any claim, damages or other liability,
-        whether in an action of contract, tort or otherwise, arising from, out of or in connection with the
-        software or the use or other dealings in the software.
-
-        No advice or information, whether oral or written, obtained by you in any fashion shall create any warranty
-        not expressly stated in this Agreement.
-
-        You expressly understand and agree that in no event will we be liable with respect to any subject matter of
-        this agreement under any contract, negligence, strict liability or other legal or equitable theory for: 
-        (i) any special, incidental or consequential damages; (ii) the cost of procurement or substitute
-        products or services; (iii) interruption of use or loss or corruption of data; (iv)
-        any statements or conduct of any third party on the service; or (v) 
-        ny unauthorized access to or alterations of your Content. We shall have no liability for any failure
-        or delay due to matters beyond our reasonable control.
-
-        The foregoing shall not apply to the extent prohibited by applicable law.
-    </b></p>
 
     <h2>
         License

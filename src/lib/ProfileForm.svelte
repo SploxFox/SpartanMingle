@@ -159,7 +159,7 @@
         <section>
             <label>
                 <input type="checkbox" bind:checked={terms}/>
-                I have read and I accept the <a href="/#terms" target='_blank'>terms and conditions and privacy policy</a>.
+                I have read and I accept the terms and conditions and privacy policy.
             </label>
         </section>
 
@@ -184,6 +184,7 @@
 <div class="actions">
     <Button minor on:click={signOut}>Sign out</Button>
     <Button minor on:click={deleteUser}>Delete account</Button>
+    <Button minor on:click={() => window.location.hash = '#terms'}>Terms and Conditions/Privacy Policy</Button>
 </div>
 
 
